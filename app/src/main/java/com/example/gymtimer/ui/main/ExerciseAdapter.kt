@@ -1,5 +1,6 @@
 package com.example.gymtimer
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,39 +9,48 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.gymtimer.ui.main.Exercise
 import com.example.gymtimer.ui.main.Rest
 
-class ExercisesAdapter(private val exercisesList: List<Any>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class ExercisesAdapter(private val items: List<Any>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    private val EXERCISE_TYPE = 0
-    private val REST_TYPE = 1
+    companion object {
+        private const val TYPE_EXERCISE = 0
+        private const val TYPE_REST = 1
+    }
 
     override fun getItemViewType(position: Int): Int {
-        return when (exercisesList[position]) {
-            is Exercise -> EXERCISE_TYPE
-            is Rest -> REST_TYPE
-            else -> throw IllegalArgumentException("Invalid item type")
+        Log.d("AdapterDebug", "Item type at position $position: ${items[position]::class.java}")
+        return when (items[position]) {
+            is Exercise -> TYPE_EXERCISE
+            is Rest -> TYPE_REST
+            else -> {
+                Log.e("AdapterError", "Invalid item type at position $position: ${items[position]::class.java}")
+                throw IllegalArgumentException("Invalid item type")
+            }
         }
     }
 
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return if (viewType == EXERCISE_TYPE) {
-            val view = LayoutInflater.from(parent.context).inflate(R.layout.item_exercise, parent, false)
-            ExerciseViewHolder(view)
-        } else {
-            val view = LayoutInflater.from(parent.context).inflate(R.layout.item_rest, parent, false)
-            RestViewHolder(view)
+        return when (viewType) {
+            TYPE_EXERCISE -> {
+                val view = LayoutInflater.from(parent.context).inflate(R.layout.item_exercise, parent, false)
+                ExerciseViewHolder(view)
+            }
+            TYPE_REST -> {
+                val view = LayoutInflater.from(parent.context).inflate(R.layout.item_rest, parent, false)
+                RestViewHolder(view)
+            }
+            else -> throw IllegalArgumentException("Invalid view type")
         }
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        val item = exercisesList[position]
-        if (holder is ExerciseViewHolder && item is Exercise) {
-            holder.bind(item)
-        } else if (holder is RestViewHolder && item is Rest) {
-            holder.bind(item)
+        when (holder) {
+            is ExerciseViewHolder -> holder.bind(items[position] as Exercise)
+            is RestViewHolder -> holder.bind(items[position] as Rest)
         }
     }
 
-    override fun getItemCount(): Int = exercisesList.size
+    override fun getItemCount(): Int = items.size
 
     inner class ExerciseViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val exerciseName: TextView = itemView.findViewById(R.id.tvExerciseName)
@@ -48,7 +58,7 @@ class ExercisesAdapter(private val exercisesList: List<Any>) : RecyclerView.Adap
 
         fun bind(exercise: Exercise) {
             exerciseName.text = exercise.name
-            exerciseDuration.text = "${exercise.duration} secs"
+            exerciseDuration.text = "${exercise.duration} sec"
         }
     }
 
@@ -56,7 +66,8 @@ class ExercisesAdapter(private val exercisesList: List<Any>) : RecyclerView.Adap
         private val restDuration: TextView = itemView.findViewById(R.id.tvRestDuration)
 
         fun bind(rest: Rest) {
-            restDuration.text = "${rest.duration} secs"
+            restDuration.text = "Rest: ${rest.duration} sec"
         }
     }
 }
+
