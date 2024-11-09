@@ -1,13 +1,21 @@
 package com.example.gymtimer
 
+import android.content.Context
 import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.gymtimer.ui.main.Exercise
 import com.example.gymtimer.ui.main.Rest
+import com.example.gymtimer.ui.main.Workout
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+
 
 class AddWorkoutActivity : AppCompatActivity() {
     private lateinit var workoutNameEditText: EditText
@@ -32,19 +40,94 @@ class AddWorkoutActivity : AppCompatActivity() {
         exercisesRecyclerView.adapter = adapter
 
         addExerciseButton.setOnClickListener {
-            val newExercise = Exercise("New Exercise", 30) // Placeholder; open a dialog to customize
-            exercisesList.add(newExercise)
-            adapter.notifyDataSetChanged()
+            showAddExerciseDialog(adapter)
         }
 
         addRestButton.setOnClickListener {
-            val newRest = Rest(10) // Default to 10 seconds; allow customization through dialog
-            exercisesList.add(newRest)
-            adapter.notifyDataSetChanged()
+            showAddRestDialog(adapter)
         }
 
         saveWorkoutButton.setOnClickListener {
-            // Save workout logic here
+            if (workoutNameEditText.text.isNotEmpty() && exercisesList.isNotEmpty()) {
+                saveWorkout()
+            } else {
+                // Show a warning message if the workout name or exercises are empty
+                showErrorDialog("Please enter a workout name and add at least one exercise.")
+            }
         }
+    }
+
+    private fun showAddExerciseDialog(adapter: ExercisesAdapter) {
+        val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_add_exercise, null)
+        val exerciseNameEditText = dialogView.findViewById<EditText>(R.id.etExerciseName)
+        val exerciseDurationEditText = dialogView.findViewById<EditText>(R.id.etExerciseDuration)
+
+        AlertDialog.Builder(this)
+            .setTitle("Add Exercise")
+            .setView(dialogView)
+            .setPositiveButton("Add") { _, _ ->
+                val name = exerciseNameEditText.text.toString()
+                val duration = exerciseDurationEditText.text.toString().toIntOrNull() ?: 30 // Default 30 seconds
+                if (name.isNotEmpty() && duration > 0) {
+                    exercisesList.add(Exercise(name, duration))
+                    adapter.notifyDataSetChanged()
+                }
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+    private fun showAddRestDialog(adapter: ExercisesAdapter) {
+        val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_add_rest, null)
+        val restDurationEditText = dialogView.findViewById<EditText>(R.id.etRestDuration)
+
+        AlertDialog.Builder(this)
+            .setTitle("Add Rest")
+            .setView(dialogView)
+            .setPositiveButton("Add") { _, _ ->
+                val duration = restDurationEditText.text.toString().toIntOrNull() ?: 10 // Default 10 seconds
+                if (duration > 0) {
+                    exercisesList.add(Rest(duration))
+                    adapter.notifyDataSetChanged()
+                }
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+    private fun saveWorkout() {
+        val sharedPreferences = getSharedPreferences("workouts_pref", Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        val gson = Gson()
+
+        // Retrieve existing workouts
+        val existingWorkoutsJson = sharedPreferences.getString("workout_list", null)
+        val type = object : TypeToken<MutableList<Workout>>() {}.type
+        val workoutList: MutableList<Workout> = existingWorkoutsJson?.let {
+            gson.fromJson(it, type)
+        } ?: mutableListOf()
+
+        // Create a new Workout object
+        val workout = Workout(
+            name = workoutNameEditText.text.toString(),
+            exercises = exercisesList
+        )
+
+        // Add the new workout to the list and save it
+        workoutList.add(workout)
+        val updatedWorkoutsJson = gson.toJson(workoutList)
+        editor.putString("workout_list", updatedWorkoutsJson)
+        editor.apply()
+
+        // Finish activity and return to main screen
+        finish()
+    }
+
+    private fun showErrorDialog(message: String) {
+        AlertDialog.Builder(this)
+            .setTitle("Error")
+            .setMessage(message)
+            .setPositiveButton("OK", null)
+            .show()
     }
 }

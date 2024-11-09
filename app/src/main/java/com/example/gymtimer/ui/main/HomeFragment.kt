@@ -1,5 +1,6 @@
 package com.example.gymtimer.ui.main
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,10 +11,15 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.gymtimer.AddWorkoutActivity
 import com.example.gymtimer.R
+import com.example.gymtimer.ui.main.Workout
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 
 class HomeFragment : Fragment() {
-    private val workoutList = mutableListOf<Workout>() // Initialize a mutable list of Workout objects
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var adapter: WorkoutAdapter
+    private val workoutList = mutableListOf<Workout>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -22,11 +28,13 @@ class HomeFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_main, container, false)
 
         // Set up RecyclerView
-        val recyclerView = view.findViewById<RecyclerView>(R.id.recyclerViewWorkouts)
+        recyclerView = view.findViewById(R.id.recyclerViewWorkouts)
         recyclerView.layoutManager = LinearLayoutManager(context)
-        recyclerView.adapter = WorkoutAdapter(workoutList)
+        adapter = WorkoutAdapter(workoutList)
+        recyclerView.adapter = adapter
 
-        // Set up Floating Action Button
+        loadWorkoutsFromStorage()
+
         val fabAddWorkout = view.findViewById<FloatingActionButton>(R.id.fabAddWorkout)
         fabAddWorkout.setOnClickListener {
             val intent = Intent(activity, AddWorkoutActivity::class.java)
@@ -35,6 +43,33 @@ class HomeFragment : Fragment() {
 
         return view
     }
+    override fun onResume() {
+        super.onResume()
+        loadWorkoutsFromStorage()
+    }
+    private fun clearWorkouts() {
+        val sharedPreferences = requireContext().getSharedPreferences("workouts_pref", Context.MODE_PRIVATE)
+        sharedPreferences.edit().remove("workout_list").apply()
+
+        workoutList.clear()
+        adapter.notifyDataSetChanged()
+    }
+
+    private fun loadWorkoutsFromStorage() {
+        val sharedPreferences = requireContext().getSharedPreferences("workouts_pref", Context.MODE_PRIVATE)
+        val gson = Gson()
+        val existingWorkoutsJson = sharedPreferences.getString("workout_list", null)
+        val type = object : TypeToken<MutableList<Workout>>() {}.type
+
+        val loadedWorkouts: MutableList<Workout> = existingWorkoutsJson?.let {
+            gson.fromJson(it, type)
+        } ?: mutableListOf()
+
+        workoutList.clear()
+        workoutList.addAll(loadedWorkouts)
+        adapter.notifyDataSetChanged()
+    }
+
 
     companion object {
         fun newInstance(sectionNumber: Int): HomeFragment {
