@@ -1,4 +1,12 @@
-Lixos no custimize workout
+prio
 
-Abrir o workout qnd clicas no nome
+4 Abrir o workout qnd clicas no nome
 
+3 bazar do workout continua com sons mm com ele fechado
+1 adicionar circulos ao workout
+0 swap buttons no alarm
+2 poder pausar durante cada exercicio do workout
+
+
+
+5 UI tá feia

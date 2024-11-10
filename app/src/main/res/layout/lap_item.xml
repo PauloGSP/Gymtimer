@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -5,19 +6,19 @@
     android:padding="8dp">
 
     <TextView
-        android:id="@+id/tvRestDuration"
+        android:id="@+id/lapTimeTextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:text="Rest"
-        android:textSize="16sp" />
+        android:text="00:00:00.00"
+        android:textSize="18sp"
+        android:gravity="start" />
 
-    <ImageButton
-        android:id="@+id/btnDeleteRest"
+    <TextView
+        android:id="@+id/lapTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_trash"
-        android:background="?attr/selectableItemBackground"
-        android:contentDescription="Delete Rest"
-        android:tint="@android:color/holo_red_dark" />
+        android:text="Lap 1"
+        android:textSize="18sp"
+        android:gravity="end" />
 </LinearLayout>

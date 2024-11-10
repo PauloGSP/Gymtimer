@@ -1,6 +1,5 @@
 package com.example.gymtimer.ui.main
 
-import WorkoutDeserializer
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -13,7 +12,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.gymtimer.ExercisesAdapter
 import com.example.gymtimer.R
-import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 
@@ -22,9 +20,11 @@ class EditWorkoutActivity : AppCompatActivity() {
     private lateinit var addExerciseButton: Button
     private lateinit var addRestButton: Button
     private lateinit var saveWorkoutButton: Button
+    private lateinit var deleteWorkoutButton: Button
     private lateinit var exercisesRecyclerView: RecyclerView
     private var exercisesList = mutableListOf<Any>()
     private lateinit var workout: Workout
+    private lateinit var adapter: ExercisesAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,18 +34,22 @@ class EditWorkoutActivity : AppCompatActivity() {
         addExerciseButton = findViewById(R.id.btnAddExercise)
         addRestButton = findViewById(R.id.btnAddRest)
         saveWorkoutButton = findViewById(R.id.btnSaveWorkout)
+        deleteWorkoutButton = findViewById(R.id.btnDeleteWorkout)
         exercisesRecyclerView = findViewById(R.id.recyclerViewExercises)
 
         exercisesRecyclerView.layoutManager = LinearLayoutManager(this)
-        val adapter = ExercisesAdapter(exercisesList)
+        adapter = ExercisesAdapter(exercisesList) { position ->
+            exercisesList.removeAt(position)
+            adapter.notifyItemRemoved(position)
+        }
         exercisesRecyclerView.adapter = adapter
 
-        // Load the workout data
-        val workoutJson = intent.getStringExtra("workout_data")
+        // Load the workout data with the custom deserializer
         val gson = GsonBuilder()
             .registerTypeAdapter(Workout::class.java, WorkoutDeserializer())
             .create()
 
+        val workoutJson = intent.getStringExtra("workout_data")
         workout = gson.fromJson(workoutJson, Workout::class.java)
 
         workoutNameEditText.setText(workout.name)
@@ -61,7 +65,15 @@ class EditWorkoutActivity : AppCompatActivity() {
         }
 
         saveWorkoutButton.setOnClickListener {
-            saveWorkoutToStorage()
+            if (workoutNameEditText.text.isNotEmpty() && exercisesList.isNotEmpty()) {
+                saveWorkoutToStorage()
+            } else {
+                showErrorDialog("Please enter a workout name and add at least one exercise.")
+            }
+        }
+
+        deleteWorkoutButton.setOnClickListener {
+            confirmDeleteWorkout()
         }
     }
 
@@ -78,7 +90,7 @@ class EditWorkoutActivity : AppCompatActivity() {
                 val duration = exerciseDurationEditText.text.toString().toIntOrNull() ?: 30
                 if (name.isNotEmpty() && duration > 0) {
                     exercisesList.add(Exercise(name, duration))
-                    adapter.notifyDataSetChanged()
+                    adapter.notifyItemInserted(exercisesList.size - 1)
                 }
             }
             .setNegativeButton("Cancel", null)
@@ -96,7 +108,7 @@ class EditWorkoutActivity : AppCompatActivity() {
                 val duration = restDurationEditText.text.toString().toIntOrNull() ?: 10
                 if (duration > 0) {
                     exercisesList.add(Rest(duration))
-                    adapter.notifyDataSetChanged()
+                    adapter.notifyItemInserted(exercisesList.size - 1)
                 }
             }
             .setNegativeButton("Cancel", null)
@@ -106,7 +118,9 @@ class EditWorkoutActivity : AppCompatActivity() {
     private fun saveWorkoutToStorage() {
         val sharedPreferences = getSharedPreferences("workouts_pref", Context.MODE_PRIVATE)
         val editor = sharedPreferences.edit()
-        val gson = Gson()
+        val gson = GsonBuilder()
+            .registerTypeAdapter(Workout::class.java, WorkoutDeserializer())
+            .create()
 
         val updatedWorkout = Workout(workoutNameEditText.text.toString(), exercisesList)
         val existingWorkoutsJson = sharedPreferences.getString("workout_list", null)
@@ -122,6 +136,47 @@ class EditWorkoutActivity : AppCompatActivity() {
         val updatedWorkoutsJson = gson.toJson(workoutList)
         editor.putString("workout_list", updatedWorkoutsJson).apply()
 
-        finish() // Return to the main screen after saving
+        finish()
+    }
+
+    private fun confirmDeleteWorkout() {
+        AlertDialog.Builder(this)
+            .setTitle("Delete Workout")
+            .setMessage("Are you sure you want to delete this workout?")
+            .setPositiveButton("Yes") { _, _ ->
+                deleteWorkoutFromStorage()
+            }
+            .setNegativeButton("No", null)
+            .show()
+    }
+
+    private fun deleteWorkoutFromStorage() {
+        val sharedPreferences = getSharedPreferences("workouts_pref", Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        val gson = GsonBuilder()
+            .registerTypeAdapter(Workout::class.java, WorkoutDeserializer())
+            .create()
+
+        val existingWorkoutsJson = sharedPreferences.getString("workout_list", null)
+        val type = object : TypeToken<MutableList<Workout>>() {}.type
+        val workoutList: MutableList<Workout> = existingWorkoutsJson?.let {
+            gson.fromJson(it, type)
+        } ?: mutableListOf()
+
+        // Remove the workout from the list
+        workoutList.removeIf { it.name == workout.name }
+
+        val updatedWorkoutsJson = gson.toJson(workoutList)
+        editor.putString("workout_list", updatedWorkoutsJson).apply()
+
+        finish() // Return to the main screen after deleting
+    }
+
+    private fun showErrorDialog(message: String) {
+        AlertDialog.Builder(this)
+            .setTitle("Error")
+            .setMessage(message)
+            .setPositiveButton("OK", null)
+            .show()
     }
 }

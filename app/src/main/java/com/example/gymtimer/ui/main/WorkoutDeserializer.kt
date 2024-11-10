@@ -1,3 +1,5 @@
+package com.example.gymtimer.ui.main
+
 import com.example.gymtimer.ui.main.Exercise
 import com.example.gymtimer.ui.main.Rest
 import com.example.gymtimer.ui.main.Workout

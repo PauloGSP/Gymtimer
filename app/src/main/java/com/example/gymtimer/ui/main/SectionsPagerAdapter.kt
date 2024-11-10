@@ -10,9 +10,9 @@ import com.example.gymtimer.ui.main.ClockFragment
 import com.example.gymtimer.ui.main.SettingsFragment
 
 private val TAB_TITLES = arrayOf(
-    R.string.tab_text_1,  // Home
-    R.string.tab_text_2,  // Settings
-    R.string.tab_text_3   // Another tab, e.g., Profile or Logs
+    R.string.tab_text_2,  // Clock (left)
+    R.string.tab_text_1,  // Home (middle)
+    R.string.tab_text_3   // Settings (right)
 )
 
 /**
@@ -24,20 +24,19 @@ class SectionsPagerAdapter(private val context: Context, fm: FragmentManager)
 
     override fun getItem(position: Int): Fragment {
         return when (position) {
-            0 -> HomeFragment()  // Replace with your actual home screen fragment class
-            1 -> ClockFragment()  // Replace with your actual settings fragment class
-            2 -> SettingsFragment()
+            0 -> ClockFragment()     // Left tab (Clock)
+            1 -> HomeFragment()      // Middle tab (Home)
+            2 -> SettingsFragment()  // Right tab (Settings)
             else -> HomeFragment.newInstance(position + 1)
         }
     }
-
 
     override fun getPageTitle(position: Int): CharSequence? {
         return context.resources.getString(TAB_TITLES[position])
     }
 
     override fun getCount(): Int {
-        // Show 2 total pages.
+        // Show 3 total pages.
         return 3
     }
 }

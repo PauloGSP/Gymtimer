@@ -10,12 +10,21 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:text="Exercise Name"
-        android:textSize="16sp" />
+        android:textSize="18sp" />
 
     <TextView
         android:id="@+id/tvExerciseDuration"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Duration"
-        android:textSize="14sp" />
+        android:textSize="16sp" />
+
+    <ImageButton
+        android:id="@+id/btnDeleteExercise"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_trash"
+        android:background="?attr/selectableItemBackground"
+        android:contentDescription="Delete Exercise"
+        android:tint="@android:color/holo_red_dark" />
 </LinearLayout>

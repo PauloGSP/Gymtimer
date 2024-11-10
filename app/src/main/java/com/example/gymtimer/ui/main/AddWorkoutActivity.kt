@@ -13,9 +13,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.gymtimer.ui.main.Exercise
 import com.example.gymtimer.ui.main.Rest
 import com.example.gymtimer.ui.main.Workout
-import com.google.gson.Gson
+import com.example.gymtimer.ui.main.WorkoutDeserializer
+import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
-
 
 class AddWorkoutActivity : AppCompatActivity() {
     private lateinit var workoutNameEditText: EditText
@@ -23,7 +23,8 @@ class AddWorkoutActivity : AppCompatActivity() {
     private lateinit var addRestButton: Button
     private lateinit var saveWorkoutButton: Button
     private lateinit var exercisesRecyclerView: RecyclerView
-    private val exercisesList = mutableListOf<Any>() // Can hold Exercise or Rest objects
+    private val exercisesList = mutableListOf<Any>()
+    private lateinit var adapter: ExercisesAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,7 +37,10 @@ class AddWorkoutActivity : AppCompatActivity() {
         exercisesRecyclerView = findViewById(R.id.recyclerViewExercises)
 
         exercisesRecyclerView.layoutManager = LinearLayoutManager(this)
-        val adapter = ExercisesAdapter(exercisesList)
+        adapter = ExercisesAdapter(exercisesList) { position ->
+            exercisesList.removeAt(position)
+            adapter.notifyItemRemoved(position)
+        }
         exercisesRecyclerView.adapter = adapter
 
         addExerciseButton.setOnClickListener {
@@ -51,7 +55,6 @@ class AddWorkoutActivity : AppCompatActivity() {
             if (workoutNameEditText.text.isNotEmpty() && exercisesList.isNotEmpty()) {
                 saveWorkout()
             } else {
-                // Show a warning message if the workout name or exercises are empty
                 showErrorDialog("Please enter a workout name and add at least one exercise.")
             }
         }
@@ -67,10 +70,10 @@ class AddWorkoutActivity : AppCompatActivity() {
             .setView(dialogView)
             .setPositiveButton("Add") { _, _ ->
                 val name = exerciseNameEditText.text.toString()
-                val duration = exerciseDurationEditText.text.toString().toIntOrNull() ?: 30 // Default 30 seconds
+                val duration = exerciseDurationEditText.text.toString().toIntOrNull() ?: 30
                 if (name.isNotEmpty() && duration > 0) {
                     exercisesList.add(Exercise(name, duration))
-                    adapter.notifyDataSetChanged()
+                    adapter.notifyItemInserted(exercisesList.size - 1)
                 }
             }
             .setNegativeButton("Cancel", null)
@@ -85,10 +88,10 @@ class AddWorkoutActivity : AppCompatActivity() {
             .setTitle("Add Rest")
             .setView(dialogView)
             .setPositiveButton("Add") { _, _ ->
-                val duration = restDurationEditText.text.toString().toIntOrNull() ?: 10 // Default 10 seconds
+                val duration = restDurationEditText.text.toString().toIntOrNull() ?: 10
                 if (duration > 0) {
                     exercisesList.add(Rest(duration))
-                    adapter.notifyDataSetChanged()
+                    adapter.notifyItemInserted(exercisesList.size - 1)
                 }
             }
             .setNegativeButton("Cancel", null)
@@ -98,28 +101,25 @@ class AddWorkoutActivity : AppCompatActivity() {
     private fun saveWorkout() {
         val sharedPreferences = getSharedPreferences("workouts_pref", Context.MODE_PRIVATE)
         val editor = sharedPreferences.edit()
-        val gson = Gson()
+        val gson = GsonBuilder()
+            .registerTypeAdapter(Workout::class.java, WorkoutDeserializer())
+            .create()
 
-        // Retrieve existing workouts
         val existingWorkoutsJson = sharedPreferences.getString("workout_list", null)
         val type = object : TypeToken<MutableList<Workout>>() {}.type
         val workoutList: MutableList<Workout> = existingWorkoutsJson?.let {
             gson.fromJson(it, type)
         } ?: mutableListOf()
 
-        // Create a new Workout object
         val workout = Workout(
             name = workoutNameEditText.text.toString(),
             exercises = exercisesList
         )
 
-        // Add the new workout to the list and save it
         workoutList.add(workout)
         val updatedWorkoutsJson = gson.toJson(workoutList)
-        editor.putString("workout_list", updatedWorkoutsJson)
-        editor.apply()
+        editor.putString("workout_list", updatedWorkoutsJson).apply()
 
-        // Finish activity and return to main screen
         finish()
     }
 

@@ -1,5 +1,5 @@
 package com.example.gymtimer.ui.main
-import WorkoutDeserializer
+import com.example.gymtimer.ui.main.WorkoutDeserializer
 import com.google.gson.Gson
 
 import android.media.MediaPlayer
