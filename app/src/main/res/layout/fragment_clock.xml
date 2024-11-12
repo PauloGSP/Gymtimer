@@ -2,12 +2,16 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tabsClock"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        app:tabTextColor="?attr/colorOnBackground"
+        app:tabSelectedTextColor="?attr/colorPrimaryVariant"
+        app:tabIndicatorColor="?attr/colorPrimaryVariant"/>
 
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/viewPagerClock"

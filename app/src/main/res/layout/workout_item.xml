@@ -2,7 +2,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:padding="8dp">
+    android:padding="16dp">
 
     <TextView
         android:id="@+id/tvWorkoutName"
@@ -10,18 +10,26 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:text="Workout Name"
+        android:textColor="?attr/colorOnBackground"
         android:textSize="16sp" />
 
     <ImageButton
         android:id="@+id/btnPlay"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_play" />
+        android:background="?attr/colorSurface"
+        android:src="@drawable/ic_play"
+        android:tint="?attr/colorPrimaryVariant"
+        android:paddingRight="15dp"/>
 
     <ImageButton
         android:id="@+id/btnSettings"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_settings" />
+        android:src="@drawable/ic_settings"
+        android:tint="?attr/colorPrimaryVariant"
+        android:paddingRight="10dp"
+
+        android:background="?attr/colorSurface"/>
 
 </LinearLayout>

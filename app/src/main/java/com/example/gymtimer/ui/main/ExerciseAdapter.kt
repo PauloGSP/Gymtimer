@@ -66,7 +66,7 @@ class ExercisesAdapter(private val items: MutableList<Any>, private val onDelete
 
         fun bind(exercise: Exercise) {
             exerciseName.text = exercise.name
-            exerciseDuration.text = "${exercise.duration} sec"
+            exerciseDuration.text = "Duration: ${exercise.duration} sec"
         }
     }
 
@@ -75,7 +75,7 @@ class ExercisesAdapter(private val items: MutableList<Any>, private val onDelete
         val deleteButton: ImageButton = itemView.findViewById(R.id.btnDeleteRest)
 
         fun bind(rest: Rest) {
-            restDuration.text = "Rest: ${rest.duration} sec"
+            restDuration.text = "Duration: ${rest.duration} sec"
         }
     }
 }

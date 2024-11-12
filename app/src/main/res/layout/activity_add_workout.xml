@@ -1,38 +1,72 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:padding="16dp">
+
+    <!-- Banner ImageView at the top -->
+    <ImageView
+        android:id="@+id/bannerImageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/banner"
+        android:contentDescription="@string/app_name"
+        android:layout_alignParentTop="true"
+        android:layout_marginBottom="16dp" />
 
     <EditText
         android:id="@+id/etWorkoutName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Workout Name" />
+        android:hint="Workout Name"
+        android:textColor="?attr/colorOnBackground"
+        android:layout_below="@id/bannerImageView" />
 
-    <Button
-        android:id="@+id/btnAddExercise"
+    <LinearLayout
+        android:id="@+id/btnslayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Add Exercise" />
+        android:orientation="horizontal"
+        android:layout_below="@id/etWorkoutName"
+        android:layout_marginTop="8dp">
 
-    <Button
-        android:id="@+id/btnAddRest"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Add Rest" />
+        <Button
+            android:id="@+id/btnAddExercise"
+            android:layout_width="198dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_weight="1"
+            android:backgroundTint="?attr/colorSecondaryVariant"
+            android:text="Add Exercise"
+            android:textColor="?attr/colorOnBackground" />
+
+        <Button
+            android:id="@+id/btnAddRest"
+            android:layout_width="198dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_weight="1"
+            android:backgroundTint="?attr/colorSecondaryVariant"
+            android:text="Add Rest"
+            android:textColor="?attr/colorOnBackground" />
+    </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewExercises"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/btnSaveWorkout"
+        android:layout_below="@+id/btnslayout"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:textColor="?attr/colorOnBackground" />
 
     <Button
         android:id="@+id/btnSaveWorkout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Save Workout" />
-
-</LinearLayout>
+        android:backgroundTint="?attr/colorSecondary"
+        android:text="Save Workout"
+        android:textColor="?attr/colorOnBackground"
+        android:layout_alignParentBottom="true" />
+</RelativeLayout>

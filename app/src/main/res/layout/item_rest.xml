@@ -3,13 +3,18 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:padding="8dp">
-
     <TextView
-        android:id="@+id/tvRestDuration"
+        android:id="@+id/tvRestName"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:text="Rest"
+        android:textSize="18sp" />
+    <TextView
+        android:id="@+id/tvRestDuration"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:text="Duration"
         android:textSize="16sp" />
 
     <ImageButton
@@ -19,5 +24,8 @@
         android:src="@drawable/ic_trash"
         android:background="?attr/selectableItemBackground"
         android:contentDescription="Delete Rest"
-        android:tint="@android:color/holo_red_dark" />
+        android:tint="?attr/colorPrimaryVariant" />
 </LinearLayout>
+
+
+

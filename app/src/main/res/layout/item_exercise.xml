@@ -26,5 +26,5 @@
         android:src="@drawable/ic_trash"
         android:background="?attr/selectableItemBackground"
         android:contentDescription="Delete Exercise"
-        android:tint="@android:color/holo_red_dark" />
+        android:tint="?attr/colorPrimaryVariant" />
 </LinearLayout>

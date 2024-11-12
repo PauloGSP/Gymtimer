@@ -9,7 +9,7 @@
         android:id="@+id/initialTimeTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@android:color/white"
+        android:textColor="?attr/colorOnBackground"
         android:textSize="18sp"
         android:layout_centerHorizontal="true"
         android:layout_alignParentTop="true"
@@ -28,12 +28,12 @@
         android:id="@+id/remainingTimeTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@android:color/white"
+        android:textColor="?attr/colorOnBackground"
         android:textSize="32sp"
         android:layout_centerInParent="true"
         android:visibility="gone" />
 
-    <!-- Time Pickers -->
+    <!-- Time Pickers with Labels -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -42,20 +42,69 @@
         android:layout_below="@id/initialTimeTextView"
         android:layout_marginTop="24dp">
 
-        <NumberPicker
-            android:id="@+id/hourPicker"
+        <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginEnd="8dp">
 
-        <NumberPicker
-            android:id="@+id/minutePicker"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            <TextView
+                android:id="@+id/thours"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="Hours"
+                android:textColor="?attr/colorOnBackground"
+                android:textSize="14sp" />
 
-        <NumberPicker
-            android:id="@+id/secondPicker"
+            <NumberPicker
+                android:id="@+id/hourPicker"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp">
+
+            <TextView
+                android:id="@+id/tminutes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="Minutes"
+                android:textColor="?attr/colorOnBackground"
+                android:textSize="14sp" />
+
+            <NumberPicker
+                android:id="@+id/minutePicker"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginStart="8dp">
+
+            <TextView
+                android:id="@+id/tsecond"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="Seconds"
+                android:textColor="?attr/colorOnBackground"
+                android:textSize="14sp" />
+
+            <NumberPicker
+                android:id="@+id/secondPicker"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
     </LinearLayout>
 
     <!-- Buttons -->
@@ -71,22 +120,24 @@
             android:id="@+id/btnPauseTimer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+
             android:text="Pause"
-            android:visibility="gone"
-            android:layout_marginEnd="16dp" />
+            android:visibility="gone" />
 
         <Button
             android:id="@+id/btnStopTimer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
             android:text="Stop"
-            android:visibility="gone"
-            android:layout_marginEnd="16dp" />
+            android:visibility="gone" />
 
         <Button
             android:id="@+id/btnStartTimer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Start" />
+            android:text="Start"
+            android:visibility="visible" />
     </LinearLayout>
 </RelativeLayout>

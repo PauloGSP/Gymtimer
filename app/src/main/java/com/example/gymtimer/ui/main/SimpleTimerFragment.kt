@@ -14,6 +14,9 @@ import com.example.gymtimer.R
 import com.example.gymtimer.customviews.CircularTimerView
 
 class SimpleTimerFragment : Fragment() {
+    private lateinit var thour: TextView
+    private lateinit var tminute: TextView
+    private lateinit var tsecond: TextView
     private lateinit var hourPicker: NumberPicker
     private lateinit var minutePicker: NumberPicker
     private lateinit var secondPicker: NumberPicker
@@ -46,6 +49,9 @@ class SimpleTimerFragment : Fragment() {
         circularTimerView = view.findViewById(R.id.circularTimerView)
         initialTimeTextView = view.findViewById(R.id.initialTimeTextView)
         remainingTimeTextView = view.findViewById(R.id.remainingTimeTextView)
+        thour = view.findViewById(R.id.thours)
+        tminute = view.findViewById(R.id.tminutes)
+        tsecond = view.findViewById(R.id.tsecond)
 
         hourPicker.maxValue = 99
         hourPicker.minValue = 0
@@ -55,17 +61,15 @@ class SimpleTimerFragment : Fragment() {
         secondPicker.minValue = 0
 
         startButton.setOnClickListener {
-            if (!timerRunning) {
-                if (pausedTime == 0L) {
-                    startTimer()
-                } else {
-                    resumeTimer()
-                }
-            }
+            startTimer()
         }
 
         pauseButton.setOnClickListener {
-            pauseTimer()
+            if (timerRunning) {
+                pauseTimer()
+            } else {
+                resumeTimer()
+            }
         }
 
         stopButton.setOnClickListener {
@@ -82,7 +86,9 @@ class SimpleTimerFragment : Fragment() {
 
         totalTimeInMillis = (hours * 3600 + minutes * 60 + seconds) * 1000L
         if (totalTimeInMillis == 0L) return
-
+        thour.visibility = View.GONE
+        tminute.visibility = View.GONE
+        tsecond.visibility = View.GONE
         hourPicker.visibility = View.GONE
         minutePicker.visibility = View.GONE
         secondPicker.visibility = View.GONE
@@ -93,6 +99,7 @@ class SimpleTimerFragment : Fragment() {
         initialTimeTextView.text = "Initial Time: $formattedInitialTime"
         initialTimeTextView.visibility = View.VISIBLE
         remainingTimeTextView.visibility = View.VISIBLE
+        pauseButton.text = "Pause"
 
         circularTimerView.setTotalTime(totalTimeInMillis)
         timerRunning = true
@@ -106,8 +113,10 @@ class SimpleTimerFragment : Fragment() {
     private fun resumeTimer() {
         countDownTimer = createCountDownTimer(remainingTime).start()
         timerRunning = true
+        pauseButton.text = "Pause"
         startButton.visibility = View.GONE
         pauseButton.visibility = View.VISIBLE
+        stopButton.visibility = View.VISIBLE
     }
 
     private fun createCountDownTimer(timeInMillis: Long): CountDownTimer {
@@ -126,32 +135,8 @@ class SimpleTimerFragment : Fragment() {
             }
 
             override fun onFinish() {
-                timerRunning = false
-                startButton.text = "Start"
-                startButton.visibility = View.VISIBLE
-                pauseButton.visibility = View.GONE
-                stopButton.visibility = View.GONE
-                circularTimerView.reset()
-                remainingTimeTextView.text = "00:00:00.00"
-
-                // Play alarm sound when timer finishes
-                mediaPlayer = MediaPlayer.create(context, R.raw.alarm_clock)
-                var playCount = 0
-                val maxPlays = 3
-
-                mediaPlayer?.apply {
-                    start()
-                    setOnCompletionListener {
-                        playCount++
-                        if (playCount < maxPlays) {
-                            start()
-                        } else {
-                            release()
-                            mediaPlayer = null
-                        }
-                    }
-                }
-
+                resetToInitialLayout()
+                playAlarmSound()
             }
         }
     }
@@ -160,36 +145,55 @@ class SimpleTimerFragment : Fragment() {
         countDownTimer?.cancel()
         pausedTime = remainingTime
         timerRunning = false
-        startButton.text = "Resume"
-        startButton.visibility = View.VISIBLE
-        pauseButton.visibility = View.GONE
+        pauseButton.text = "Resume"
     }
 
     private fun stopTimer() {
         countDownTimer?.cancel()
+        resetToInitialLayout()
+        pausedTime = 0L
+    }
+
+    private fun resetToInitialLayout() {
         timerRunning = false
         startButton.text = "Start"
         startButton.visibility = View.VISIBLE
         pauseButton.visibility = View.GONE
         stopButton.visibility = View.GONE
-        circularTimerView.reset()
 
+        circularTimerView.reset()
+        remainingTimeTextView.text = "00:00:00.00"
+
+        // Reset visibility of time pickers and labels
         hourPicker.visibility = View.VISIBLE
         minutePicker.visibility = View.VISIBLE
         secondPicker.visibility = View.VISIBLE
-        circularTimerView.visibility = View.GONE
+        thour.visibility = View.VISIBLE
+        tminute.visibility = View.VISIBLE
+        tsecond.visibility = View.VISIBLE
+
+        // Hide initial time and remaining time display
         initialTimeTextView.visibility = View.GONE
         remainingTimeTextView.visibility = View.GONE
+        circularTimerView.visibility = View.GONE
+    }
 
-        pausedTime = 0L // Reset paused time
+    private fun playAlarmSound() {
+        mediaPlayer = MediaPlayer.create(context, R.raw.alarm_clock)
+        var playCount = 0
+        val maxPlays = 3
 
-        // Stop and release the media player if it's playing
-        mediaPlayer?.let {
-            if (it.isPlaying) {
-                it.stop()
+        mediaPlayer?.apply {
+            start()
+            setOnCompletionListener {
+                playCount++
+                if (playCount < maxPlays) {
+                    start()
+                } else {
+                    release()
+                    mediaPlayer = null
+                }
             }
-            it.release()
-            mediaPlayer = null
         }
     }
 

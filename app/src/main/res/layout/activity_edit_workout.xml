@@ -4,34 +4,60 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="16dp">
+    <ImageView
+        android:id="@+id/bannerImageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/banner"
+        android:contentDescription="@string/app_name"
+        android:layout_alignParentTop="true"
+        android:layout_marginBottom="16dp" />
 
     <EditText
         android:id="@+id/etWorkoutName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Workout Name"
-        android:textSize="18sp" />
+        android:textSize="18sp"
+        android:textColor="?attr/colorOnBackground"/>
 
-    <Button
-        android:id="@+id/btnAddExercise"
-        android:layout_width="wrap_content"
+    <!-- Horizontal layout for side-by-side buttons -->
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Add Exercise"
-        android:layout_marginTop="8dp" />
+        android:orientation="horizontal"
+        android:layout_marginTop="8dp">
 
-    <Button
-        android:id="@+id/btnAddRest"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Add Rest"
-        android:layout_marginTop="4dp" />
+        <Button
+            android:id="@+id/btnAddExercise"
+            android:layout_width="0dp"
+            android:layout_marginEnd="8dp"
+
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Add Exercise"
+            android:backgroundTint="?attr/colorSecondaryVariant"
+            android:textColor="?attr/colorOnBackground" />
+
+        <Button
+            android:id="@+id/btnAddRest"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="8dp"
+            android:text="Add Rest"
+            android:backgroundTint="?attr/colorSecondaryVariant"
+            android:textColor="?attr/colorOnBackground" />
+    </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewExercises"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:layout_marginTop="8dp" />
+        android:layout_marginTop="8dp"
+        android:textColor="?attr/colorOnBackground"/>
 
     <Button
         android:id="@+id/btnSaveWorkout"
@@ -39,8 +65,8 @@
         android:layout_height="wrap_content"
         android:text="Save Workout"
         android:layout_marginTop="8dp"
-        android:background="?android:attr/selectableItemBackground"
-        android:textColor="@android:color/white" />
+        android:backgroundTint="?attr/colorSecondary"
+        android:textColor="?attr/colorOnBackground" />
 
     <Button
         android:id="@+id/btnDeleteWorkout"
@@ -48,8 +74,7 @@
         android:layout_height="wrap_content"
         android:text="Delete Workout"
         android:layout_marginTop="8dp"
-        android:background="?android:attr/selectableItemBackground"
-        android:textColor="@android:color/white"
-        android:backgroundTint="@android:color/holo_red_dark" />
+        android:textColor="?attr/colorSecondaryVariant"
+        android:backgroundTint="?attr/colorSecondary" />
 
 </LinearLayout>

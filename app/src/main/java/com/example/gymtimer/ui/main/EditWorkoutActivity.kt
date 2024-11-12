@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.gymtimer.ExercisesAdapter
+import com.example.gymtimer.MainActivity
 import com.example.gymtimer.R
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
@@ -29,6 +30,7 @@ class EditWorkoutActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_workout)
+        supportActionBar?.setDisplayShowTitleEnabled(false)
 
         workoutNameEditText = findViewById(R.id.etWorkoutName)
         addExerciseButton = findViewById(R.id.btnAddExercise)

@@ -17,7 +17,7 @@ import com.example.gymtimer.ui.main.WorkoutDeserializer
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 
-class AddWorkoutActivity : AppCompatActivity() {
+class AddWorkoutActivity : MainActivity() {
     private lateinit var workoutNameEditText: EditText
     private lateinit var addExerciseButton: Button
     private lateinit var addRestButton: Button
@@ -28,6 +28,8 @@ class AddWorkoutActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        supportActionBar?.setDisplayShowTitleEnabled(false)
+        supportActionBar?.setDisplayShowCustomEnabled(true)
         setContentView(R.layout.activity_add_workout)
 
         workoutNameEditText = findViewById(R.id.etWorkoutName)

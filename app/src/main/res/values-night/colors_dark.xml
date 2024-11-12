@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="primaryGreen">#16FEC0</color>
+    <color name="primaryPurple">#DB38FF</color>
+    <color name="secondaryLightGreen">#0B4136</color>
+    <color name="secondaryLightPurple">#371141</color>
+    <color name="background">#1F1F1F</color>
+    <color name="text">#eae9fc</color>
+
+    <!-- Add more colors as needed -->
+</resources>

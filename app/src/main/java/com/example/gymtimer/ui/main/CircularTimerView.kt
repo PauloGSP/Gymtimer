@@ -14,15 +14,22 @@ class CircularTimerView(context: Context, attrs: AttributeSet) : View(context, a
     private var initialStrokeWidth = 50f // Initial width for the timer circle
     private var minStrokeWidth = 25f // Minimum width for the timer circle
 
-    private var paint = Paint().apply {
-        color = ContextCompat.getColor(context, R.color.teal_700)
+    private var primaryPaint = Paint().apply {
+        color = ContextCompat.getColor(context, R.color.primaryPurple) // Primary color
         style = Paint.Style.STROKE
         strokeWidth = initialStrokeWidth
         isAntiAlias = true
     }
 
+    private var secondaryPaint = Paint().apply {
+        color = ContextCompat.getColor(context, R.color.secondaryLightPurple) // Secondary color for thinner stroke
+        style = Paint.Style.STROKE
+        strokeWidth = minStrokeWidth
+        isAntiAlias = true
+    }
+
     private var textPaint = Paint().apply {
-        color = ContextCompat.getColor(context, R.color.black)
+        color = ContextCompat.getColor(context, R.color.text) // Dynamic text color based on theme
         textSize = 60f
         textAlign = Paint.Align.CENTER
         isAntiAlias = true
@@ -40,7 +47,7 @@ class CircularTimerView(context: Context, attrs: AttributeSet) : View(context, a
 
     fun reset() {
         remainingTime = 0L
-        paint.strokeWidth = initialStrokeWidth
+        primaryPaint.strokeWidth = initialStrokeWidth
         invalidate()
     }
 
@@ -49,30 +56,24 @@ class CircularTimerView(context: Context, attrs: AttributeSet) : View(context, a
         if (totalTime > 0) {
             val fractionPassed = 1 - (remainingTime.toFloat() / totalTime)
 
-            // Calculate the angle of the circle that should have the thinner stroke width (25f)
+            // Calculate the angle of the circle that should have the thinner stroke width
             val thinnerStrokeAngle = 360 * fractionPassed
 
-            // Draw the part with the thinner stroke width (25f)
-            paint.strokeWidth = minStrokeWidth
+            // Draw the part with the secondary (thinner) stroke width
             canvas.drawArc(
                 50f, 50f, width - 50f, height - 50f,
-                -90f, thinnerStrokeAngle, false, paint
+                -90f, thinnerStrokeAngle, false, secondaryPaint
             )
 
-            // Draw the remaining part with the initial stroke width (50f)
-            paint.strokeWidth = initialStrokeWidth
+            // Draw the remaining part with the initial (thicker) stroke width
             canvas.drawArc(
                 50f, 50f, width - 50f, height - 50f,
-                -90f + thinnerStrokeAngle, 360 - thinnerStrokeAngle, false, paint
+                -90f + thinnerStrokeAngle, 360 - thinnerStrokeAngle, false, primaryPaint
             )
-
-            // Draw initial time above the circle
-            //val initialTimeText = formatTime(totalTime)
-            //canvas.drawText(initialTimeText, width / 2f, 100f, textPaint)
 
             // Draw remaining time at the center of the circle
-            val remainingTimeText = formatTime(remainingTime)
-            canvas.drawText(remainingTimeText, width / 2f, height / 2f + textPaint.textSize / 3, textPaint)
+            //val remainingTimeText = formatTime(remainingTime)
+            //canvas.drawText(remainingTimeText, width / 2f, height / 2f + textPaint.textSize / 3, textPaint)
         }
     }
 
