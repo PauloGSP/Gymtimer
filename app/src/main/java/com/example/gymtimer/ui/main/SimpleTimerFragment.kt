@@ -80,6 +80,7 @@ class SimpleTimerFragment : Fragment() {
     }
 
     private fun startTimer() {
+        stopSound() // Ensure any previous sound is stopped
         val hours = hourPicker.value
         val minutes = minutePicker.value
         val seconds = secondPicker.value
@@ -146,10 +147,14 @@ class SimpleTimerFragment : Fragment() {
         pausedTime = remainingTime
         timerRunning = false
         pauseButton.text = "Resume"
+        pauseButton.visibility = View.VISIBLE
+        stopButton.visibility = View.VISIBLE
+        startButton.visibility = View.GONE
     }
 
     private fun stopTimer() {
         countDownTimer?.cancel()
+        stopSound() // Stop any currently playing sound
         resetToInitialLayout()
         pausedTime = 0L
     }
@@ -179,6 +184,7 @@ class SimpleTimerFragment : Fragment() {
     }
 
     private fun playAlarmSound() {
+        stopSound() // Stop any currently playing sound
         mediaPlayer = MediaPlayer.create(context, R.raw.alarm_clock)
         var playCount = 0
         val maxPlays = 3
@@ -197,9 +203,23 @@ class SimpleTimerFragment : Fragment() {
         }
     }
 
+    private fun stopSound() {
+        mediaPlayer?.let {
+            if (it.isPlaying) {
+                it.stop()
+            }
+            it.release()
+            mediaPlayer = null
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        stopSound() // Stop any playing sound when fragment is paused
+    }
+
     override fun onDestroy() {
         super.onDestroy()
-        mediaPlayer?.release()
-        mediaPlayer = null
+        stopSound() // Release media player resources when fragment is destroyed
     }
 }

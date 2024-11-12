@@ -36,7 +36,13 @@ class WorkoutAdapter(private val workouts: List<Workout>) : RecyclerView.Adapter
             }
             holder.itemView.context.startActivity(intent)
         }
-
+        holder.itemView.setOnClickListener {
+            val intent = Intent(holder.itemView.context, ViewWorkoutActivity::class.java)
+            // Pass the workout JSON data to the ViewWorkoutActivity
+            val workoutJson = gson.toJson(workout) // Convert Workout object to JSON
+            intent.putExtra("workout_data", workoutJson)
+            holder.itemView.context.startActivity(intent)
+        }
         holder.btnSettings.setOnClickListener {
             val intent = Intent(holder.itemView.context, EditWorkoutActivity::class.java).apply {
                 putExtra("workout_data", Gson().toJson(workout))

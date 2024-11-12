@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".MainActivity"
+    android:background="?attr/colorSurface">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
@@ -19,6 +20,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:src="@drawable/banner"
+            android:background="?attr/colorSurface"
             android:contentDescription="@string/app_name" />
 
         <com.google.android.material.tabs.TabLayout

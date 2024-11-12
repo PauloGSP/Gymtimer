@@ -4,7 +4,23 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="16dp">
-
+    <TextView
+        android:id="@+id/tvStreak"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Streak"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:layout_gravity="center_horizontal"
+        android:paddingBottom="16dp" />
+    <TextView
+        android:id="@+id/streakTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Current Streak: 0"
+        android:textSize="18sp"
+        android:layout_gravity="center_horizontal"
+        android:paddingBottom="16dp" />
     <TextView
         android:id="@+id/tvSettingsHeader"
         android:layout_width="wrap_content"
@@ -22,5 +38,16 @@
         android:text="Clear All Workouts"
         android:textColor="?attr/colorSecondaryVariant"
         android:padding="12dp" />
+
+    <Button
+        android:id="@+id/resetStreakButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Reset Streak"
+        android:textColor="?attr/colorSecondaryVariant"
+        android:padding="12dp"
+        android:layout_marginTop="8dp" />
+
+
 
 </LinearLayout>

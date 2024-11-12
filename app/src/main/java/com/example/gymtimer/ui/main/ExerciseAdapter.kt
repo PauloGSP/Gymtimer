@@ -1,15 +1,22 @@
 package com.example.gymtimer
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.gymtimer.ui.main.Exercise
 import com.example.gymtimer.ui.main.Rest
-class ExercisesAdapter(private val items: MutableList<Any>, private val onDeleteItem: (Int) -> Unit) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+import java.util.Collections
+
+class ExercisesAdapter(
+    private val items: MutableList<Any>,
+    private val onDeleteItem: (Int) -> Unit = {}, // Default no-op lambda
+    private val onStartDrag: (RecyclerView.ViewHolder) -> Unit = {}, // Callback for drag start
+    private val viewOnly: Boolean = false // New parameter for view-only mode
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     companion object {
         private const val TYPE_EXERCISE = 0
@@ -43,15 +50,33 @@ class ExercisesAdapter(private val items: MutableList<Any>, private val onDelete
             is ExerciseViewHolder -> {
                 val exercise = items[position] as Exercise
                 holder.bind(exercise)
-                holder.deleteButton.setOnClickListener {
-                    onDeleteItem(position)
+                if (!viewOnly) {
+                    holder.deleteButton.visibility = View.VISIBLE
+                    holder.dragHandle.visibility = View.VISIBLE
+                    holder.deleteButton.setOnClickListener { onDeleteItem(position) }
+                    holder.dragHandle.setOnTouchListener { _, _ ->
+                        onStartDrag(holder)
+                        false
+                    }
+                } else {
+                    holder.deleteButton.visibility = View.GONE
+                    holder.dragHandle.visibility = View.GONE
                 }
             }
             is RestViewHolder -> {
                 val rest = items[position] as Rest
                 holder.bind(rest)
-                holder.deleteButton.setOnClickListener {
-                    onDeleteItem(position)
+                if (!viewOnly) {
+                    holder.deleteButton.visibility = View.VISIBLE
+                    holder.dragHandle.visibility = View.VISIBLE
+                    holder.deleteButton.setOnClickListener { onDeleteItem(position) }
+                    holder.dragHandle.setOnTouchListener { _, _ ->
+                        onStartDrag(holder)
+                        false
+                    }
+                } else {
+                    holder.deleteButton.visibility = View.GONE
+                    holder.dragHandle.visibility = View.GONE
                 }
             }
         }
@@ -59,10 +84,16 @@ class ExercisesAdapter(private val items: MutableList<Any>, private val onDelete
 
     override fun getItemCount(): Int = items.size
 
+    fun moveItem(fromPosition: Int, toPosition: Int) {
+        Collections.swap(items, fromPosition, toPosition)
+        notifyItemMoved(fromPosition, toPosition)
+    }
+
     inner class ExerciseViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val exerciseName: TextView = itemView.findViewById(R.id.tvExerciseName)
         private val exerciseDuration: TextView = itemView.findViewById(R.id.tvExerciseDuration)
         val deleteButton: ImageButton = itemView.findViewById(R.id.btnDeleteExercise)
+        val dragHandle: ImageView = itemView.findViewById(R.id.dragHandle)
 
         fun bind(exercise: Exercise) {
             exerciseName.text = exercise.name
@@ -73,11 +104,10 @@ class ExercisesAdapter(private val items: MutableList<Any>, private val onDelete
     inner class RestViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val restDuration: TextView = itemView.findViewById(R.id.tvRestDuration)
         val deleteButton: ImageButton = itemView.findViewById(R.id.btnDeleteRest)
+        val dragHandle: ImageView = itemView.findViewById(R.id.dragHandle)
 
         fun bind(rest: Rest) {
             restDuration.text = "Duration: ${rest.duration} sec"
         }
     }
 }
-
-

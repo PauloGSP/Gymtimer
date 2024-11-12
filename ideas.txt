@@ -1,12 +1,18 @@
 prio
 
-4 Abrir o workout qnd clicas no nome
+Bugs
+pressionar back do telemovel ainda toca sons
 
-3 bazar do workout continua com sons mm com ele fechado
-1 adicionar circulos ao workout
-0 swap buttons no alarm
-2 poder pausar durante cada exercicio do workout
+features
+	Fazer testes
+	Winstreak 
+		Mudar o nome da tab
+		Adicionar animação
+
+	Fazer logo
+	
+probably there will be a need to monitor memory usage
 
 
 
-5 UI tá feia
+

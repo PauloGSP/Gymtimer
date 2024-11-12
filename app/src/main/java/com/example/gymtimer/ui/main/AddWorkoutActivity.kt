@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import android.widget.NumberPicker
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -17,7 +18,7 @@ import com.example.gymtimer.ui.main.WorkoutDeserializer
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 
-class AddWorkoutActivity : MainActivity() {
+class AddWorkoutActivity : AppCompatActivity() {
     private lateinit var workoutNameEditText: EditText
     private lateinit var addExerciseButton: Button
     private lateinit var addRestButton: Button
@@ -28,8 +29,6 @@ class AddWorkoutActivity : MainActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        supportActionBar?.setDisplayShowTitleEnabled(false)
-        supportActionBar?.setDisplayShowCustomEnabled(true)
         setContentView(R.layout.activity_add_workout)
 
         workoutNameEditText = findViewById(R.id.etWorkoutName)
@@ -39,18 +38,23 @@ class AddWorkoutActivity : MainActivity() {
         exercisesRecyclerView = findViewById(R.id.recyclerViewExercises)
 
         exercisesRecyclerView.layoutManager = LinearLayoutManager(this)
-        adapter = ExercisesAdapter(exercisesList) { position ->
-            exercisesList.removeAt(position)
-            adapter.notifyItemRemoved(position)
-        }
+        adapter = ExercisesAdapter(
+            items = exercisesList,
+            onDeleteItem = { position ->
+                exercisesList.removeAt(position)
+                adapter.notifyItemRemoved(position)
+            },
+            onStartDrag = {} // No-op lambda for dragging since it's not used here
+        )
+
         exercisesRecyclerView.adapter = adapter
 
         addExerciseButton.setOnClickListener {
-            showAddExerciseDialog(adapter)
+            showAddExerciseDialog()
         }
 
         addRestButton.setOnClickListener {
-            showAddRestDialog(adapter)
+            showAddRestDialog()
         }
 
         saveWorkoutButton.setOnClickListener {
@@ -62,17 +66,27 @@ class AddWorkoutActivity : MainActivity() {
         }
     }
 
-    private fun showAddExerciseDialog(adapter: ExercisesAdapter) {
-        val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_add_exercise, null)
+    private fun showAddExerciseDialog() {
+        val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_time_picker, null)
         val exerciseNameEditText = dialogView.findViewById<EditText>(R.id.etExerciseName)
-        val exerciseDurationEditText = dialogView.findViewById<EditText>(R.id.etExerciseDuration)
+        val minutePicker = dialogView.findViewById<NumberPicker>(R.id.minutePicker)
+        val secondPicker = dialogView.findViewById<NumberPicker>(R.id.secondPicker)
+
+        // Set up the NumberPickers programmatically
+        minutePicker.minValue = 0
+        minutePicker.maxValue = 99
+        secondPicker.minValue = 0
+        secondPicker.maxValue = 59
 
         AlertDialog.Builder(this)
             .setTitle("Add Exercise")
             .setView(dialogView)
             .setPositiveButton("Add") { _, _ ->
                 val name = exerciseNameEditText.text.toString()
-                val duration = exerciseDurationEditText.text.toString().toIntOrNull() ?: 30
+                val minutes = minutePicker.value
+                val seconds = secondPicker.value
+                val duration = minutes * 60 + seconds
+
                 if (name.isNotEmpty() && duration > 0) {
                     exercisesList.add(Exercise(name, duration))
                     adapter.notifyItemInserted(exercisesList.size - 1)
@@ -82,15 +96,27 @@ class AddWorkoutActivity : MainActivity() {
             .show()
     }
 
-    private fun showAddRestDialog(adapter: ExercisesAdapter) {
-        val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_add_rest, null)
-        val restDurationEditText = dialogView.findViewById<EditText>(R.id.etRestDuration)
+    private fun showAddRestDialog() {
+        val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_time_picker, null)
+        val exerciseNameEditText = dialogView.findViewById<EditText>(R.id.etExerciseName)
+        exerciseNameEditText.visibility = View.GONE // Hide the name input for rest
+        val minutePicker = dialogView.findViewById<NumberPicker>(R.id.minutePicker)
+        val secondPicker = dialogView.findViewById<NumberPicker>(R.id.secondPicker)
+
+        // Set up the NumberPickers programmatically
+        minutePicker.minValue = 0
+        minutePicker.maxValue = 99
+        secondPicker.minValue = 0
+        secondPicker.maxValue = 59
 
         AlertDialog.Builder(this)
             .setTitle("Add Rest")
             .setView(dialogView)
             .setPositiveButton("Add") { _, _ ->
-                val duration = restDurationEditText.text.toString().toIntOrNull() ?: 10
+                val minutes = minutePicker.value
+                val seconds = secondPicker.value
+                val duration = minutes * 60 + seconds
+
                 if (duration > 0) {
                     exercisesList.add(Rest(duration))
                     adapter.notifyItemInserted(exercisesList.size - 1)
@@ -101,6 +127,11 @@ class AddWorkoutActivity : MainActivity() {
     }
 
     private fun saveWorkout() {
+        if (exercisesList.isEmpty()) {
+            showErrorDialog("A workout must contain at least one exercise or rest.")
+            return
+        }
+
         val sharedPreferences = getSharedPreferences("workouts_pref", Context.MODE_PRIVATE)
         val editor = sharedPreferences.edit()
         val gson = GsonBuilder()
@@ -124,6 +155,7 @@ class AddWorkoutActivity : MainActivity() {
 
         finish()
     }
+
 
     private fun showErrorDialog(message: String) {
         AlertDialog.Builder(this)

@@ -3,7 +3,12 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:padding="8dp">
-
+    <ImageView
+        android:id="@+id/dragHandle"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_gravity="center_vertical"
+        android:src="@drawable/ic_baseline_drag_handle_24" />
     <TextView
         android:id="@+id/tvExerciseName"
         android:layout_width="0dp"
