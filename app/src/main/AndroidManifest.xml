@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.gymtimer">
-
+    package="com.example.gymtimer"
+    xmlns:tools="http://schemas.android.com/tools">
     <application
+        tools:replace="android:icon, android:label"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -11,24 +12,24 @@
         android:theme="@style/Theme.Gymtimer">
 
         <activity
-            android:name=".AddWorkoutActivity"
+            android:name=".ui.main.AddWorkoutActivity"
             android:theme="@style/Theme.Gymtimer.NoActionBar"
-            android:exported="false" />
+            android:exported="true" />
 
         <activity
             android:name=".ui.main.TimerActivity"
             android:theme="@style/Theme.Gymtimer.NoActionBar"
-            android:exported="false" />
+            android:exported="true" />
 
         <activity
             android:name=".ui.main.EditWorkoutActivity"
             android:theme="@style/Theme.Gymtimer.NoActionBar"
-            android:exported="false" />
+            android:exported="true" />
 
         <activity
             android:name=".ui.main.ViewWorkoutActivity"
             android:theme="@style/Theme.Gymtimer.NoActionBar"
-            android:exported="false" />
+            android:exported="true" />
 
         <activity
             android:name=".MainActivity"
@@ -43,4 +44,7 @@
 
 
 </application>
+    <uses-permission
+        android:name="android.permission.INTERNET"
+        tools:node="remove"/>
 </manifest>

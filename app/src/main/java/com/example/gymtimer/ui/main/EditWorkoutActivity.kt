@@ -12,7 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.gymtimer.ExercisesAdapter
+import com.example.gymtimer.ExerciseAdapter
 import com.example.gymtimer.R
 import com.example.gymtimer.ui.main.Exercise
 import com.example.gymtimer.ui.main.Rest
@@ -30,7 +30,7 @@ class EditWorkoutActivity : AppCompatActivity() {
     private lateinit var exercisesRecyclerView: RecyclerView
     private var exercisesList = mutableListOf<Any>()
     private lateinit var workout: Workout
-    private lateinit var adapter: ExercisesAdapter
+    private lateinit var adapter: ExerciseAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,7 +45,7 @@ class EditWorkoutActivity : AppCompatActivity() {
         exercisesRecyclerView = findViewById(R.id.recyclerViewExercises)
 
         exercisesRecyclerView.layoutManager = LinearLayoutManager(this)
-        adapter = ExercisesAdapter(
+        adapter = ExerciseAdapter(
             items = exercisesList,
             onDeleteItem = { position ->
                 exercisesList.removeAt(position)

@@ -8,7 +8,8 @@ import android.view.View
 import androidx.core.content.ContextCompat
 import com.example.gymtimer.R
 
-class CircularTimerView(context: Context, attrs: AttributeSet) : View(context, attrs) {
+class CircularTimerView : View {
+
     private var totalTime: Long = 0L
     private var remainingTime: Long = 0L
     private var initialStrokeWidth = 50f // Initial width for the timer circle
@@ -34,6 +35,10 @@ class CircularTimerView(context: Context, attrs: AttributeSet) : View(context, a
         textAlign = Paint.Align.CENTER
         isAntiAlias = true
     }
+
+    constructor(context: Context) : super(context)
+
+    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
 
     fun setTotalTime(totalTime: Long) {
         this.totalTime = totalTime
@@ -70,18 +75,10 @@ class CircularTimerView(context: Context, attrs: AttributeSet) : View(context, a
                 50f, 50f, width - 50f, height - 50f,
                 -90f + thinnerStrokeAngle, 360 - thinnerStrokeAngle, false, primaryPaint
             )
-
-            // Draw remaining time at the center of the circle
-            //val remainingTimeText = formatTime(remainingTime)
-            //canvas.drawText(remainingTimeText, width / 2f, height / 2f + textPaint.textSize / 3, textPaint)
         }
     }
 
-    private fun formatTime(timeMillis: Long): String {
-        val totalSeconds = timeMillis / 1000
-        val seconds = totalSeconds % 60
-        val minutes = (totalSeconds / 60) % 60
-        val hours = totalSeconds / 3600
-        return String.format("%02d:%02d:%02d", hours, minutes, seconds)
+    fun getRemainingTime(): Long {
+        return remainingTime
     }
 }

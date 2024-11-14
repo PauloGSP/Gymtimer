@@ -10,7 +10,6 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.gymtimer.AddWorkoutActivity
 import com.example.gymtimer.R
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.gson.Gson

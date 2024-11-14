@@ -1,4 +1,4 @@
-package com.example.gymtimer
+package com.example.gymtimer.ui.main
 
 import android.content.Context
 import android.os.Bundle
@@ -11,10 +11,8 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.gymtimer.ui.main.Exercise
-import com.example.gymtimer.ui.main.Rest
-import com.example.gymtimer.ui.main.Workout
-import com.example.gymtimer.ui.main.WorkoutDeserializer
+import com.example.gymtimer.ExerciseAdapter
+import com.example.gymtimer.R
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 
@@ -25,7 +23,7 @@ class AddWorkoutActivity : AppCompatActivity() {
     private lateinit var saveWorkoutButton: Button
     private lateinit var exercisesRecyclerView: RecyclerView
     private val exercisesList = mutableListOf<Any>()
-    private lateinit var adapter: ExercisesAdapter
+    private lateinit var adapter: ExerciseAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,7 +36,7 @@ class AddWorkoutActivity : AppCompatActivity() {
         exercisesRecyclerView = findViewById(R.id.recyclerViewExercises)
 
         exercisesRecyclerView.layoutManager = LinearLayoutManager(this)
-        adapter = ExercisesAdapter(
+        adapter = ExerciseAdapter(
             items = exercisesList,
             onDeleteItem = { position ->
                 exercisesList.removeAt(position)

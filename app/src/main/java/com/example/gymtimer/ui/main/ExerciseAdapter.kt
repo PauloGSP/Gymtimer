@@ -11,7 +11,7 @@ import com.example.gymtimer.ui.main.Exercise
 import com.example.gymtimer.ui.main.Rest
 import java.util.Collections
 
-class ExercisesAdapter(
+class ExerciseAdapter(
     private val items: MutableList<Any>,
     private val onDeleteItem: (Int) -> Unit = {}, // Default no-op lambda
     private val onStartDrag: (RecyclerView.ViewHolder) -> Unit = {}, // Callback for drag start

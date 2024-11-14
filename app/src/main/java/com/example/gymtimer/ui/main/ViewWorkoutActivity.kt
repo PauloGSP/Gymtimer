@@ -6,7 +6,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.gymtimer.ExercisesAdapter
+import com.example.gymtimer.ExerciseAdapter
 import com.example.gymtimer.R
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
@@ -15,7 +15,7 @@ class ViewWorkoutActivity : AppCompatActivity() {
 
     private lateinit var workoutNameTextView: TextView
     private lateinit var exercisesRecyclerView: RecyclerView
-    private lateinit var adapter: ExercisesAdapter
+    private lateinit var adapter: ExerciseAdapter
     private var exercisesList = mutableListOf<Any>()
     private lateinit var workout: Workout
 
@@ -28,7 +28,7 @@ class ViewWorkoutActivity : AppCompatActivity() {
 
         // Set up RecyclerView
         exercisesRecyclerView.layoutManager = LinearLayoutManager(this)
-        adapter = ExercisesAdapter(exercisesList, viewOnly = true)
+        adapter = ExerciseAdapter(exercisesList, viewOnly = true)
         exercisesRecyclerView.adapter = adapter
 
         // Load workout data from intent
