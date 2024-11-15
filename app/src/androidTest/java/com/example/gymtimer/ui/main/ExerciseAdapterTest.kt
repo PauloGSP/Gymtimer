@@ -4,7 +4,9 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.widget.FrameLayout
 import android.widget.TextView
+import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
+import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.example.gymtimer.ExerciseAdapter
@@ -24,12 +26,23 @@ class ExerciseAdapterTest {
 
     @Before
     fun setup() {
+        // Launch a FragmentActivity to apply the theme
+        val scenario = ActivityScenario.launch(FragmentActivity::class.java)
+        scenario.onActivity { activity ->
+            activity.setTheme(R.style.Theme_Gymtimer) // Set the correct theme to the activity
+        }
+
+        // Initialize context and adapter
         context = ApplicationProvider.getApplicationContext()
+
+        // Define the list of exercises/rests
         val exercises: MutableList<Any> = mutableListOf(
             Exercise("Push Up", 30),
             Rest(15),
             Exercise("Squat", 20)
         )
+
+        // Initialize the ExerciseAdapter with the list
         exerciseAdapter = ExerciseAdapter(exercises)
     }
 
@@ -80,7 +93,7 @@ class ExerciseAdapterTest {
 
     @Test
     fun testMoveItem() {
-        // Since items is private, we need to validate using the adapter's behavior
+        // Since items are private, we need to validate using the adapter's behavior
         exerciseAdapter.moveItem(0, 1)
 
         // Verify if the item was successfully moved by checking the updated positions through binding

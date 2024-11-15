@@ -1,8 +1,10 @@
 package com.example.gymtimer.ui.main
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.core.app.ApplicationProvider
+import com.example.gymtimer.ui.main.Workout
 import com.example.gymtimer.ui.main.WorkoutAdapter
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -27,9 +29,17 @@ class WorkoutAdapterTest {
 
     @Test
     fun testOnBindViewHolder() {
+        // Create RecyclerView and set a LayoutManager
         val parent = RecyclerView(ApplicationProvider.getApplicationContext())
+        parent.layoutManager = LinearLayoutManager(ApplicationProvider.getApplicationContext())
+
+        // Create a ViewHolder using the adapter
         val viewHolder = workoutAdapter.onCreateViewHolder(parent, 0)
+
+        // Bind the ViewHolder
         workoutAdapter.onBindViewHolder(viewHolder, 0)
+
+        // Assert the correct binding of data
         assertEquals("Morning Workout", viewHolder.tvWorkoutName.text)
     }
 }

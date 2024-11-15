@@ -1,6 +1,5 @@
 package com.example.gymtimer.ui.main
 
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import androidx.test.core.app.ActivityScenario
@@ -18,7 +17,7 @@ class ClockPagerAdapterTest {
 
     @Before
     fun setup() {
-        // Use ActivityScenario to start a FragmentActivity and get a FragmentManager instance
+        // Launch FragmentActivity using ActivityScenario to provide a FragmentManager
         val scenario = ActivityScenario.launch(FragmentActivity::class.java)
         scenario.onActivity { activity ->
             fragmentManager = activity.supportFragmentManager

@@ -10,6 +10,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Gymtimer">
+        <activity android:name="androidx.fragment.app.FragmentActivity"/>
 
         <activity
             android:name=".ui.main.AddWorkoutActivity"

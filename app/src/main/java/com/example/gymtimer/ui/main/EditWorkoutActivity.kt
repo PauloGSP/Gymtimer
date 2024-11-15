@@ -1,12 +1,14 @@
 package com.example.gymtimer.ui.main
 
 import android.content.Context
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.NumberPicker
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -32,16 +34,13 @@ class EditWorkoutActivity : AppCompatActivity() {
     private lateinit var workout: Workout
     private lateinit var adapter: ExerciseAdapter
 
+    @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_workout)
         supportActionBar?.setDisplayShowTitleEnabled(false)
 
         workoutNameEditText = findViewById(R.id.etWorkoutName)
-        addExerciseButton = findViewById(R.id.btnAddExercise)
-        addRestButton = findViewById(R.id.btnAddRest)
-        saveWorkoutButton = findViewById(R.id.btnSaveWorkout)
-        deleteWorkoutButton = findViewById(R.id.btnDeleteWorkout)
         exercisesRecyclerView = findViewById(R.id.recyclerViewExercises)
 
         exercisesRecyclerView.layoutManager = LinearLayoutManager(this)
@@ -51,7 +50,7 @@ class EditWorkoutActivity : AppCompatActivity() {
                 exercisesList.removeAt(position)
                 adapter.notifyItemRemoved(position)
             },
-            onStartDrag = {} // This will be set up below with ItemTouchHelper
+            onStartDrag = {}
         )
 
         exercisesRecyclerView.adapter = adapter
@@ -59,41 +58,43 @@ class EditWorkoutActivity : AppCompatActivity() {
         // Load the workout data with the custom deserializer
         val gson = GsonBuilder().registerTypeAdapter(Workout::class.java, WorkoutDeserializer()).create()
         val workoutJson = intent.getStringExtra("workout_data")
-        workout = gson.fromJson(workoutJson, Workout::class.java)
+
+        if (workoutJson.isNullOrEmpty()) {
+            showErrorDialog("Workout data is missing.")
+            return
+        }
+
+        try {
+            workout = gson.fromJson(workoutJson, Workout::class.java) ?: throw IllegalStateException("Failed to parse workout data.")
+        } catch (e: Exception) {
+            e.printStackTrace()
+            showErrorDialog("Failed to load workout data.")
+            return
+        }
 
         workoutNameEditText.setText(workout.name)
         exercisesList.addAll(workout.exercises)
         adapter.notifyDataSetChanged()
 
-        addExerciseButton.setOnClickListener { showAddExerciseDialog() }
-        addRestButton.setOnClickListener { showAddRestDialog() }
-        saveWorkoutButton.setOnClickListener { saveWorkoutToStorage() }
-        deleteWorkoutButton.setOnClickListener { confirmDeleteWorkout() }
+        findViewById<Button>(R.id.btnAddExercise).setOnClickListener { showAddExerciseDialog() }
+        findViewById<Button>(R.id.btnAddRest).setOnClickListener { showAddRestDialog() }
+        findViewById<Button>(R.id.btnSaveWorkout).setOnClickListener { saveWorkoutToStorage() }
+        findViewById<Button>(R.id.btnDeleteWorkout).setOnClickListener { confirmDeleteWorkout() }
 
-        // Set up ItemTouchHelper for drag-and-drop
-        val itemTouchHelperCallback = object : ItemTouchHelper.SimpleCallback(
-            ItemTouchHelper.UP or ItemTouchHelper.DOWN, 0
-        ) {
-            override fun onMove(
-                recyclerView: RecyclerView,
-                viewHolder: RecyclerView.ViewHolder,
-                target: RecyclerView.ViewHolder
-            ): Boolean {
+        val itemTouchHelperCallback = object : ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP or ItemTouchHelper.DOWN, 0) {
+            override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
                 val fromPosition = viewHolder.adapterPosition
                 val toPosition = target.adapterPosition
-                // Update list and notify adapter
                 exercisesList.add(toPosition, exercisesList.removeAt(fromPosition))
                 adapter.notifyItemMoved(fromPosition, toPosition)
                 return true
             }
 
-            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                // Not used as swipe actions are not needed here
-            }
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {}
         }
-        val itemTouchHelper = ItemTouchHelper(itemTouchHelperCallback)
-        itemTouchHelper.attachToRecyclerView(exercisesRecyclerView)
+        ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(exercisesRecyclerView)
     }
+
 
     private fun showAddExerciseDialog() {
         val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_time_picker, null)
@@ -154,8 +155,8 @@ class EditWorkoutActivity : AppCompatActivity() {
             .show()
     }
 
+    @RequiresApi(Build.VERSION_CODES.N)
     private fun saveWorkoutToStorage() {
-        // Check if the workout has at least one exercise or rest
         if (exercisesList.isEmpty()) {
             showErrorDialog("A workout must contain at least one exercise or rest.")
             return
@@ -168,19 +169,15 @@ class EditWorkoutActivity : AppCompatActivity() {
         val updatedWorkout = Workout(workoutNameEditText.text.toString(), exercisesList)
         val existingWorkoutsJson = sharedPreferences.getString("workout_list", null)
         val type = object : TypeToken<MutableList<Workout>>() {}.type
-        val workoutList: MutableList<Workout> = existingWorkoutsJson?.let {
-            gson.fromJson(it, type)
-        } ?: mutableListOf()
+        val workoutList: MutableList<Workout> = existingWorkoutsJson?.let { gson.fromJson(it, type) } ?: mutableListOf()
 
-        // Update the workout in the list
         workoutList.removeIf { it.name == workout.name }
         workoutList.add(updatedWorkout)
 
-        val updatedWorkoutsJson = gson.toJson(workoutList)
-        editor.putString("workout_list", updatedWorkoutsJson).apply()
-
+        editor.putString("workout_list", gson.toJson(workoutList)).apply()
         finish()
     }
+
 
     private fun showErrorDialog(message: String) {
         AlertDialog.Builder(this)
@@ -190,6 +187,7 @@ class EditWorkoutActivity : AppCompatActivity() {
             .show()
     }
 
+    @RequiresApi(Build.VERSION_CODES.N)
     private fun confirmDeleteWorkout() {
         AlertDialog.Builder(this)
             .setTitle("Delete Workout")
@@ -199,6 +197,8 @@ class EditWorkoutActivity : AppCompatActivity() {
             .show()
     }
 
+
+    @RequiresApi(Build.VERSION_CODES.N)
     private fun deleteWorkoutFromStorage() {
         val sharedPreferences = getSharedPreferences("workouts_pref", Context.MODE_PRIVATE)
         val editor = sharedPreferences.edit()
@@ -206,16 +206,11 @@ class EditWorkoutActivity : AppCompatActivity() {
 
         val existingWorkoutsJson = sharedPreferences.getString("workout_list", null)
         val type = object : TypeToken<MutableList<Workout>>() {}.type
-        val workoutList: MutableList<Workout> = existingWorkoutsJson?.let {
-            gson.fromJson(it, type)
-        } ?: mutableListOf()
+        val workoutList: MutableList<Workout> = existingWorkoutsJson?.let { gson.fromJson(it, type) } ?: mutableListOf()
 
-        // Remove the workout from the list
         workoutList.removeIf { it.name == workout.name }
+        editor.putString("workout_list", gson.toJson(workoutList)).apply()
 
-        val updatedWorkoutsJson = gson.toJson(workoutList)
-        editor.putString("workout_list", updatedWorkoutsJson).apply()
-
-        finish() // Return to the main screen after deleting
+        finish()
     }
 }

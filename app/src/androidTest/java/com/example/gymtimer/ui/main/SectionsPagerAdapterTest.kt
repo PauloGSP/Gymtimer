@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
+import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.example.gymtimer.R
@@ -22,9 +23,13 @@ class SectionsPagerAdapterTest {
     @Before
     fun setup() {
         context = ApplicationProvider.getApplicationContext()
-        val fragmentActivity = FragmentActivity() // Create a FragmentActivity to provide a valid FragmentManager
-        fragmentManager = fragmentActivity.supportFragmentManager
-        sectionsPagerAdapter = SectionsPagerAdapter(context, fragmentManager)
+
+        // Use ActivityScenario to provide a valid FragmentActivity with a prepared Looper
+        val scenario = ActivityScenario.launch(FragmentActivity::class.java)
+        scenario.onActivity { activity ->
+            fragmentManager = activity.supportFragmentManager
+            sectionsPagerAdapter = SectionsPagerAdapter(context, fragmentManager)
+        }
     }
 
     @Test
